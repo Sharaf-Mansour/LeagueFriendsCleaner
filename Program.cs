@@ -17,10 +17,16 @@ Console.WriteLine($$"""
 var input = int.Parse(Console.ReadLine() ?? "0");
 if ((input, friends) is (1, { }))
 {
+    var friendIndex = 0;
     foreach (var friend in friends)
     {
         await leagueClient.Request(requestMethod.DELETE, $"/lol-chat/v1/friends/{friend.puuid}");
         Console.WriteLine($"Removed {friend.gameName}");
+        if (friendIndex % 3 == 0)
+        {
+            // The client has a rate limit, which might trigger a warning to RiotGames (causing a ban). Avoid this with a delay.
+            await Task.Delay(1000);
+        }
     }
     Console.WriteLine($$"""
                         Removed All friends!
